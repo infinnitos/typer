@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Legacy Typer - TyperV2</title>
+    <style>
+        @import url('https://cdnfonts.com');
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        textarea {
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            color: #ffffff; 
+            
+            font-family: "Fixedsys Excelsior", "Fixedsys Excelsior 3.01", "Fixedsys", monospace;
+            font-size: 20px; 
+            
+            font-smooth: never;
+            -webkit-font-smoothing: none;
+            text-rendering: optimizeSpeed;
+            
+            padding: 10px; 
+            border: none;
+            outline: none;
+            resize: none;
+            box-sizing: border-box;
+            line-height: 1.6;
+
+            /* --- THE BLINKING BLOCK CURSOR SETUP --- */
+            caret-shape: block;   /* Makes it a rectangular block */
+            caret-color: transparent;  /* Change this if you change your text color! */
+        }
+
+        /* BLACK EXIT BUTTON TOP RIGHT */
+        .close-btn {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: "Fixedsys Excelsior", "Fixedsys Excelsior 3.01", "Fixedsys", monospace;
+            font-size: 18px;
+            font-weight: bold;
+            border: 1px solid #ffffff;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            z-index: 9999;
+        }
+        .close-btn:hover {
+            background-color: #ffffff;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="close-btn" onclick="window.location.href='index.html'" title="Exit to Home">X</div>
+    <textarea id="editor" autofocus spellcheck=false></textarea>
+
+   <script>
+    const editor = document.getElementById('editor');
+    document.addEventListener('click', () => editor.focus());
+
+    // --- THE INCREMENTING HOTKEY DOWNLOAD FEATURE ---
+    document.addEventListener('keydown', function(event) {
+        if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+            
+            event.preventDefault(); // Stops the browser's default save window
+            
+            // 1. Get the current counter from memory, or start at 1 if it doesn't exist yet
+            let currentNumber = localStorage.getItem('log_counter');
+            if (currentNumber === null) {
+                currentNumber = 1;
+            } else {
+                currentNumber = parseInt(currentNumber); // Convert text to a number
+            }
+            
+            // 2. Grab everything you typed in the box
+            const textToSave = editor.value;
+            const blob = new Blob([textToSave], { type: "text/plain" });
+            
+            // 3. Create the temporary download link with the dynamic name
+            const downloadLink = document.createElement("a");
+            
+            // This combines the word "log", the current number, and ".txt"
+            downloadLink.download = "log" + currentNumber + ".txt"; 
+            
+            downloadLink.href = window.URL.createObjectURL(blob);
+            
+            // 4. Trigger the download automatically
+            downloadLink.click();
+            downloadLink.remove();
+            
+            // 5. Increase the counter by 1 and save the new number back to memory
+            localStorage.setItem('log_counter', currentNumber + 1);
+        }
+    });
+</script>
+
+</body>
+</html>
