@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Typer Calc - TyperV2</title>
+    <style>
+        @import url('https://cdnfonts.com');
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0;
+            background-color: #000000; color: #ffffff;
+            font-family: "Fixedsys Excelsior", "Fixedsys Excelsior 3.01", "Fixedsys", monospace;
+            overflow: hidden; height: 100vh; display: flex; flex-direction: column;
+        }
+        .app-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; border-bottom: 2px dashed #4caf50;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .app-title { font-size: 36px; color: #4caf50; }
+        .close-btn {
+            background-color: #d9534f; color: #ffffff;
+            font-family: inherit; font-size: 18px; font-weight: bold;
+            border: 1px solid #ffffff; width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; user-select: none;
+        }
+        .close-btn:hover { background-color: #c9302c; }
+        .app-body { padding: 15px; flex: 1; overflow-y: auto; }
+        .calc-wrapper { width: 280px; border: 1px solid #4caf50; padding: 12px; background: #000000; }
+        .calc-display {
+            width: 100%; height: 44px; background: #000000; border: 1px solid #ffffff;
+            color: #4caf50; font-family: inherit; font-size: 24px; text-align: right;
+            padding: 6px 10px; margin-bottom: 12px; outline: none;
+        }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn {
+            height: 42px; background: #000000; border: 1px solid #ffffff;
+            color: #ffffff; font-family: inherit; font-size: 18px; cursor: pointer;
+        }
+        .calc-btn:hover { background: #ffffff; color: #000000; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="header-left">
+            <div class="app-title">Typer Calc</div>
+            <div class="close-btn" onclick="window.location.href='index.html'" title="Exit to Home">X</div>
+        </div>
+    </div>
+    <div class="app-body">
+        <div class="calc-wrapper">
+            <input type="text" id="calcDisplay" class="calc-display" readonly value="0">
+            <div class="calc-grid">
+                <button class="calc-btn" onclick="clearCalc()">C</button>
+                <button class="calc-btn" onclick="pressCalc('/')">/</button>
+                <button class="calc-btn" onclick="pressCalc('*')">*</button>
+                <button class="calc-btn" onclick="pressCalc('-')">-</button>
+                
+                <button class="calc-btn" onclick="pressCalc('7')">7</button>
+                <button class="calc-btn" onclick="pressCalc('8')">8</button>
+                <button class="calc-btn" onclick="pressCalc('9')">9</button>
+                <button class="calc-btn" onclick="pressCalc('+')">+</button>
+                
+                <button class="calc-btn" onclick="pressCalc('4')">4</button>
+                <button class="calc-btn" onclick="pressCalc('5')">5</button>
+                <button class="calc-btn" onclick="pressCalc('6')">6</button>
+                <button class="calc-btn" onclick="solveCalc()">=</button>
+                
+                <button class="calc-btn" onclick="pressCalc('1')">1</button>
+                <button class="calc-btn" onclick="pressCalc('2')">2</button>
+                <button class="calc-btn" onclick="pressCalc('3')">3</button>
+                <button class="calc-btn" onclick="pressCalc('0')">0</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let calcVal = '0';
+        let resetNext = false;
+        function updateCalc() { document.getElementById('calcDisplay').value = calcVal; }
+        function pressCalc(val) {
+            if (calcVal === '0' || calcVal === 'Error' || resetNext) {
+                calcVal = (['+', '-', '*', '/'].includes(val)) ? calcVal + val : val;
+                resetNext = false;
+            } else { calcVal += val; }
+            updateCalc();
+        }
+        function clearCalc() { calcVal = '0'; resetNext = false; updateCalc(); }
+        function solveCalc() {
+            try { 
+                let result = Function('"use strict"; return (' + calcVal + ')')();
+                calcVal = String(result); resetNext = true;
+            } catch (e) { calcVal = 'Error'; resetNext = true; }
+            updateCalc();
+        }
+    </script>
+</body>
+</html>

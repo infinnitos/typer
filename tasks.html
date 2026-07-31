@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QuickTasks - TyperV2</title>
+    <style>
+        @import url('https://cdnfonts.com');
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0;
+            background-color: #000000; color: #ffffff;
+            font-family: "Fixedsys Excelsior", "Fixedsys Excelsior 3.01", "Fixedsys", monospace;
+            overflow: hidden; height: 100vh; display: flex; flex-direction: column;
+        }
+        .app-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; border-bottom: 2px dashed #00bcd4;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .app-title { font-size: 36px; color: #00bcd4; }
+        .close-btn {
+            background-color: #d9534f; color: #ffffff;
+            font-family: inherit; font-size: 18px; font-weight: bold;
+            border: 1px solid #ffffff; width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; user-select: none;
+        }
+        .close-btn:hover { background-color: #c9302c; }
+        .app-body { padding: 15px; flex: 1; overflow-y: auto; }
+        .task-input-bar { display: flex; gap: 10px; margin-bottom: 15px; max-width: 500px; }
+        .task-input {
+            flex: 1; background: #000000; border: 1px solid #00bcd4;
+            color: #ffffff; font-family: inherit; font-size: 18px; padding: 6px 10px; outline: none;
+        }
+        .task-list { list-style: none; padding: 0; margin: 0; max-width: 500px; }
+        .task-item {
+            display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid #333333; padding: 8px 12px; margin-bottom: 6px;
+            font-size: 18px; cursor: pointer; user-select: none;
+        }
+        .task-item:hover { border-color: #00bcd4; }
+        .task-item.done { text-decoration: line-through; color: #666666; }
+        .tool-btn {
+            background: #000000; border: 1px solid #ffffff; color: #ffffff;
+            font-family: inherit; font-size: 16px; cursor: pointer; padding: 4px 8px; user-select: none;
+        }
+        .tool-btn:hover { background: #ffffff; color: #000000; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="header-left">
+            <div class="app-title">QuickTasks</div>
+            <div class="close-btn" id="closeBtn" title="Exit to Home">X</div>
+        </div>
+    </div>
+    <div class="app-body">
+        <div class="task-input-bar">
+            <input type="text" id="taskInput" class="task-input" placeholder="Enter new task..." autocomplete="off">
+            <button class="tool-btn" id="addBtn">ADD TASK</button>
+        </div>
+        <ul id="taskList" class="task-list"></ul>
+        <div style="margin-top: 15px;">
+            <button class="tool-btn" id="clearBtn">CLEAR COMPLETED</button>
+        </div>
+    </div>
+    <script>
+        let tasks = [];
+
+        function loadTasks() {
+            try {
+                const stored = localStorage.getItem('typer_tasks');
+                if (stored) tasks = JSON.parse(stored);
+                if (!Array.isArray(tasks)) tasks = [];
+            } catch (e) {
+                tasks = [];
+            }
+        }
+
+        function saveTasks() {
+            try {
+                localStorage.setItem('typer_tasks', JSON.stringify(tasks));
+            } catch (e) {}
+        }
+
+        function renderTasks() {
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = 'task-item' + (task.done ? ' done' : '');
+                li.innerText = `[${task.done ? 'X' : ' '}] ${task.text}`;
+                li.onclick = () => {
+                    tasks[index].done = !tasks[index].done;
+                    saveTasks();
+                    renderTasks();
+                };
+                list.appendChild(li);
+            });
+        }
+
+        function handleAddTask() {
+            const input = document.getElementById('taskInput');
+            const val = input.value.trim();
+            if (val) {
+                tasks.push({ text: val, done: false });
+                input.value = '';
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        document.getElementById('addBtn').addEventListener('click', handleAddTask);
+        
+        document.getElementById('taskInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddTask();
+            }
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            tasks = tasks.filter(t => !t.done);
+            saveTasks();
+            renderTasks();
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        loadTasks();
+        renderTasks();
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Typer Dicer - TyperV2</title>
+    <style>
+        @import url('https://cdnfonts.com');
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0;
+            background-color: #000000; color: #ffffff;
+            font-family: "Fixedsys Excelsior", "Fixedsys Excelsior 3.01", "Fixedsys", monospace;
+            overflow: hidden; height: 100vh; display: flex; flex-direction: column;
+        }
+        .app-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; border-bottom: 2px dashed #9c27b0;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .app-title { font-size: 36px; color: #9c27b0; }
+        .close-btn {
+            background-color: #d9534f; color: #ffffff;
+            font-family: inherit; font-size: 18px; font-weight: bold;
+            border: 1px solid #ffffff; width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; user-select: none;
+        }
+        .close-btn:hover { background-color: #c9302c; }
+        .app-body { padding: 15px; flex: 1; overflow-y: auto; }
+        .dicer-box {
+            max-width: 320px; border: 1px solid #9c27b0;
+            padding: 20px; text-align: center; background: #000000;
+        }
+        .dice-display { font-size: 72px; color: #ffffff; margin: 15px 0; font-weight: bold; }
+        .dicer-controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
+        .dicer-select {
+            background: #000000; border: 1px solid #ffffff; color: #ffffff;
+            font-family: inherit; font-size: 18px; padding: 6px; outline: none;
+        }
+        .tool-btn {
+            background: #000000; border: 1px solid #9c27b0; color: #9c27b0;
+            font-family: inherit; font-size: 18px; cursor: pointer; padding: 6px 12px; user-select: none;
+        }
+        .tool-btn:hover { background: #9c27b0; color: #ffffff; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="header-left">
+            <div class="app-title">Typer Dicer</div>
+            <div class="close-btn" onclick="window.location.href='index.html'" title="Exit to Home">X</div>
+        </div>
+    </div>
+    <div class="app-body">
+        <div class="dicer-box">
+            <div class="dicer-controls">
+                <select id="diceSides" class="dicer-select">
+                    <option value="6">D6 (6-Sided)</option>
+                    <option value="4">D4 (4-Sided)</option>
+                    <option value="8">D8 (8-Sided)</option>
+                    <option value="10">D10 (10-Sided)</option>
+                    <option value="12">D12 (12-Sided)</option>
+                    <option value="20">D20 (20-Sided)</option>
+                    <option value="100">D100 (100-Sided)</option>
+                </select>
+                <button class="tool-btn" onclick="rollDice()">ROLL</button>
+            </div>
+            <div class="dice-display" id="diceResult">?</div>
+        </div>
+    </div>
+    <script>
+        function rollDice() {
+            const sides = parseInt(document.getElementById('diceSides').value);
+            const display = document.getElementById('diceResult');
+            let rollCount = 0;
+            const interval = setInterval(() => {
+                display.innerText = Math.floor(Math.random() * sides) + 1;
+                rollCount++;
+                if (rollCount >= 10) {
+                    clearInterval(interval);
+                    display.innerText = Math.floor(Math.random() * sides) + 1;
+                }
+            }, 40);
+        }
+    </script>
+</body>
+</html>
