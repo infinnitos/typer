@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Typer Notepad - TyperV2</title>
+    <style>
+        @import url('https://cdnfonts.com');
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0;
+            background-color: #000000; color: #ffffff;
+            font-family: "Fixedsys Excelsior", "Fixedsys Excelsior 3.01", "Fixedsys", monospace;
+            overflow: hidden; height: 100vh; display: flex; flex-direction: column;
+        }
+        .app-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; border-bottom: 2px dashed #428bca;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .app-title { font-size: 36px; color: #428bca; }
+        .close-btn {
+            background-color: #d9534f; color: #ffffff;
+            font-family: inherit; font-size: 18px; font-weight: bold;
+            border: 1px solid #ffffff; width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; user-select: none;
+        }
+        .close-btn:hover { background-color: #c9302c; }
+        .toolbar {
+            display: flex; align-items: center; gap: 8px;
+            border: 1px solid #f0ad4e; padding: 4px 8px; background-color: #000000;
+        }
+        .tool-btn {
+            background: #000000; border: 1px solid #ffffff; color: #ffffff;
+            font-family: inherit; font-size: 16px; cursor: pointer; padding: 2px 6px; user-select: none;
+        }
+        .tool-btn:hover { background: #ffffff; color: #000000; }
+        .color-palette { display: flex; gap: 4px; }
+        .color-swatch { width: 18px; height: 18px; border: 1px solid #ffffff; cursor: pointer; }
+        .color-swatch:hover { transform: scale(1.15); }
+        #editor {
+            flex: 1; width: 100vw; background-color: #000000; color: #ffffff;
+            font-family: "Fixedsys Excelsior", "Fixedsys Excelsior 3.01", "Fixedsys", monospace;
+            font-size: 18px; padding: 15px; outline: none; overflow-y: auto; line-height: 1.4; caret-color: #ffffff;
+        }
+        #editor:empty:before { content: attr(placeholder); color: #555555; pointer-events: none; display: block; }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="header-left">
+            <div class="app-title">Typer Notepad</div>
+            <div class="close-btn" onclick="window.location.href='index.html'" title="Exit to Home">X</div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="underlineBtn" title="Underline"><u>U</u></button>
+            <div class="color-palette">
+                <div class="color-swatch" style="background:#ffffff;" onmousedown="event.preventDefault(); applyColor('#ffffff');"></div>
+                <div class="color-swatch" style="background:#d9534f;" onmousedown="event.preventDefault(); applyColor('#d9534f');"></div>
+                <div class="color-swatch" style="background:#4caf50;" onmousedown="event.preventDefault(); applyColor('#4caf50');"></div>
+                <div class="color-swatch" style="background:#428bca;" onmousedown="event.preventDefault(); applyColor('#428bca');"></div>
+                <div class="color-swatch" style="background:#f0ad4e;" onmousedown="event.preventDefault(); applyColor('#f0ad4e');"></div>
+                <div class="color-swatch" style="background:#9c27b0;" onmousedown="event.preventDefault(); applyColor('#9c27b0');"></div>
+                <div class="color-swatch" style="background:#17a2b8;" onmousedown="event.preventDefault(); applyColor('#17a2b8');"></div>
+            </div>
+        </div>
+    </div>
+    <div id="editor" contenteditable="true" spellcheck="false" placeholder="Start typing..."></div>
+    <script>
+        const editor = document.getElementById('editor');
+        editor.focus();
+        function applyColor(color) {
+            editor.focus();
+            document.execCommand('foreColor', false, color);
+        }
+        document.getElementById('underlineBtn').addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            editor.focus();
+            document.execCommand('underline', false, null);
+        });
+        document.addEventListener('keydown', function(event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                let currentNumber = parseInt(localStorage.getItem('log_counter') || 1);
+                const blob = new Blob([editor.innerText], { type: "text/plain" });
+                const downloadLink = document.createElement("a");
+                downloadLink.download = "log" + currentNumber + ".txt"; 
+                downloadLink.href = window.URL.createObjectURL(blob);
+                downloadLink.click();
+                downloadLink.remove();
+                localStorage.setItem('log_counter', currentNumber + 1);
+            }
+        });
+    </script>
+</body>
+</html>
+
+```
